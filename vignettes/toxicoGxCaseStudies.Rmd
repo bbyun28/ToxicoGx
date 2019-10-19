@@ -110,10 +110,6 @@ ToxicoGx::drugGeneResponseCurve(tSets = TGGATESsmall,
 
 ```
 
-```{r, echo = FALSE}
-knitr::include_graphics('CS1_published.png')
-```
-
 ## Connectivity map analysis on TG-GATEs and human hepatocarcinoma signatures.
 
 For the second case study, we will recreate an analysis from the paper by Jos Kleinjans et al., wherein connectivity mapping has been used to predict compound carcinogenicity
