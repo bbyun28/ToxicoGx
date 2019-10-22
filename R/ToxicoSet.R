@@ -1,4 +1,4 @@
-#' Class to contain Toxicogenomic Data
+#' Class to contain Toxico-genomic Data
 #'
 #' A description which has yet to be added to this class. This is just a place
 #' holder.
@@ -1512,41 +1512,41 @@ checkTSetStructure <-
 
     if("unique.cellid" %in% colnames(tSet@curation$cell)) {
       if(length(intersect(tSet@curation$cell$unique.cellid, rownames(tSet@cell))) != nrow(tSet@cell)) {
-        message("rownames of cell slot should be curated cell ids")
+        print("rownames of cell slot should be curated cell ids")
       }
     } else {
-      message("unique.cellid which is curated cell id across data set should be a column of cell curation slot")
+      print("unique.cellid which is curated cell id across data set should be a column of cell curation slot")
     }
     #     if("cellid" %in% colnames(tSet@cell)) {
     #       if(length(intersect(tSet@curation$cell$cellid, rownames(tSet@cell))) != nrow(tSet@cell)) {
-    #         message("values of cellid column should be curated cell line ids")
+    #         print("values of cellid column should be curated cell line ids")
     #       }
     #     } else {
-    #       message("cellid which is curated cell id across data set should be a column of cell slot")
+    #       print("cellid which is curated cell id across data set should be a column of cell slot")
     #     }
 
     if(length(intersect(rownames(tSet@curation$cell), rownames(tSet@cell))) != nrow(tSet@cell)) {
-      message("rownames of curation cell slot should be the same as cell slot (curated cell ids)")
+      print("rownames of curation cell slot should be the same as cell slot (curated cell ids)")
     }
 
     if("unique.drugid" %in% colnames(tSet@curation$drug)) {
       if(length(intersect(tSet@curation$drug$unique.drugid, rownames(tSet@drug))) != nrow(tSet@drug)) {
-        message("rownames of drug slot should be curated drug ids")
+        print("rownames of drug slot should be curated drug ids")
       }
     } else {
-      message("unique.drugid which is curated drug id across data set should be a column of drug curation slot")
+      print("unique.drugid which is curated drug id across data set should be a column of drug curation slot")
     }
 
     #     if("drugid" %in% colnames(tSet@drug)) {
     #       if(length(intersect(tSet@curation$drug$drugid, rownames(tSet@drug))) != nrow(tSet@drug)) {
-    #         message("values of drugid column should be curated drug ids")
+    #         print("values of drugid column should be curated drug ids")
     #       }
     #     } else {
-    #       message("drugid which is curated drug id across data set should be a column of drug slot")
+    #       print("drugid which is curated drug id across data set should be a column of drug slot")
     #     }
 
     if(length(intersect(rownames(tSet@curation$cell), rownames(tSet@cell))) != nrow(tSet@cell)) {
-      message("rownames of curation drug slot should be the same as drug slot (curated drug ids)")
+      print("rownames of curation drug slot should be the same as drug slot (curated drug ids)")
     }
 
     if(class(tSet@cell) != "data.frame") {
@@ -1571,7 +1571,7 @@ checkTSetStructure <-
         drug.ids <- unique(tSet@sensitivity$info[,"drugid"])
         drug.ids <- drug.ids[grep("///",drug.ids, invert=TRUE)]
         if(!all(drug.ids %in% rownames(tSet@drug))) {
-          message("not all the drugs in sensitivity data are in drug slot")
+          print("not all the drugs in sensitivity data are in drug slot")
         }
       }else {
         warning("drugid does not exist in sensitivity info")

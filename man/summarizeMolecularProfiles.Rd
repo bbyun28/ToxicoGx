@@ -54,7 +54,7 @@ data(TGGATESsmall)
 summMP <- ToxicoGx::summarizeMolecularProfiles(
   tSet = TGGATESsmall, mDataType = "rna",
   cell.lines=cellNames(TGGATESsmall), drugs = head(drugNames(TGGATESsmall)),
-  features = fNames(TGGATESsmall,"rna"), duration = "8",
+  features = fNames(TGGATESsmall,"rna")[1:20], duration = "8",
   dose = c("Control", "High"), summary.stat = "median",
   fill.missing = TRUE, verbose=TRUE
   )
