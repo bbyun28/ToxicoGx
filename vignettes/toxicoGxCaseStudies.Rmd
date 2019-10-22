@@ -87,7 +87,7 @@ For plotting the gene expression under same conditions using the package, the fi
 To plot, the function drugGeneResponseCurve has been used wherein mandatory inputs such as dataset, drug name, cell-line, molecular type, gene name, dose and time points should be specified.
 
 ```{r, message = FALSE, results = 'hide'}
-devtools::install_github("bhklab/ToxicoGx", ref="CRAN_submission")
+devtools::install_github("bhklab/ToxicoGx", ref = "CRAN_submission")
 ```
 
 
@@ -97,7 +97,7 @@ library(PharmacoGx)
 library(ToxicoGx)
 # Load the tset 
 data(TGGATESsmall)
-ToxicoGx::drugGeneResponseCurve(tSets = TGGATESsmall, 
+ToxicoGx::drugGeneResponseCurve(tSets = TGGATESsmall,
                       duration = c("2", "8", "24"), 
                       cellline = "Hepatocyte", mDataTypes = "rna", 
                       features = "ENSG00000140465_at", 
