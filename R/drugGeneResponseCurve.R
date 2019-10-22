@@ -109,7 +109,6 @@ drugGeneResponseCurve <- function(
 
   # Places features in list if not already
   if (!is(features, "list")) { features <- list(features) }
-  print(features)
 
   # Subsetting the tSets based on parameter arguments
   tSets <- lapply(tSets, function(tSet) {
