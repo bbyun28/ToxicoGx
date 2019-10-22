@@ -181,7 +181,7 @@ drugResponseCurve <-
                   # legend.values_temp contains the values for all sensitivity measurements corresponding to the experiment UIDs
                   if (length(legends.label) > 1) {
                     legend.values_temp[[i]] <- paste(unlist(lapply(legends.label, function(x){
-                      sprintf("%s = %s", x, round(as.numeric(tSets[[i]]@sensitivity$profiles[exp_j,x]), digits=2))
+                      message(sprintf("%s = %s", x, round(as.numeric(tSets[[i]]@sensitivity$profiles[exp_j,x]), digits=2)))
                     })), collapse = ", ")
                   } else {
                     legend.values_temp[[i]] <- sprintf("%s = %s", legends.label, round(as.numeric(tSets[[i]]@sensitivity$profiles[exp_j, legends.label]), digits=2))
@@ -209,7 +209,7 @@ drugResponseCurve <-
               if (!missing(legends.label)) {
                 if (length(legends.label) > 1) {
                   legend.values[[j]] <- paste(unlist(lapply(legends.label, function(x){
-                    sprintf("%s = %s", x, round(as.numeric(tSets[[i]]@sensitivity$profiles[exp, x]), digits=2))
+                    message(sprintf("%s = %s", x, round(as.numeric(tSets[[i]]@sensitivity$profiles[exp, x]), digits=2)))
                   })), collapse = ", ")
                 } else {
                   legend.values[[j]] <- sprintf(" Exp %s %s = %s", rownames(tSets[[i]]@sensitivity$info)[exp], legends.label, round(as.numeric(tSets[[i]]@sensitivity$profiles[exp, legends.label]), digits=2))

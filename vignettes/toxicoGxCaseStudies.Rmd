@@ -62,7 +62,7 @@ data(HCC_sig)
 res <- apply(drug.perturbation[,,c("tstat", "fdr")],
              2, function(x, HCC){
                return(PharmacoGx::connectivityScore(x=x,
-                                        y=HCC[,2,drop=FALSE],
+                                        y=HCC[1:199, 2, drop=FALSE],
                                         method="fgsea", nperm=100))
              }, HCC=HCC_sig)
 rownames(res) <- c("Connectivity", "P Value")

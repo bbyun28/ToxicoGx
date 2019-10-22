@@ -106,7 +106,7 @@ summarizeMolecularProfiles <-
       #lapply(a, function(i){
       for (i in a) {
         if (verbose == TRUE) {
-          print(i)
+          message(i)
         }
         ## TODO:: Is the print error occuring here?
         curr_dose <- sub(';.*$','', i)
@@ -152,12 +152,12 @@ summarizeMolecularProfiles <-
     #lapply(unique(ppt[,"dose_level"]), function(i){
     for (i in unique(ppt[,"dose_level"])) {
       if (verbose == TRUE ) {
-        print(i)
+        message(i)
       }
       #lapply(unique(ppt[,"duration"]), function(j){
       for (j in unique(ppt[,"duration"])) {
         if (verbose == TRUE) {
-          print(j)
+          message(j)
         }
         pp4 <- apply(ppt[ppt[,"dose_level"] == i & ppt[,"duration"] == j,,drop=F], 2, function (x) {
           x <- paste(unique(as.character(x[!is.na(x)])), collapse="///")

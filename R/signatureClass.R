@@ -70,7 +70,7 @@ setMethod("show", signature=signature(object='ToxicoSig'),
 #'
 showSigAnnot <- function(Sigs){
 
-  print(Sigs@Call)
-  print(Sigs@SessionInfo)
+  message(Sigs@Call)
+  message(Sigs@SessionInfo)
   return(invisible(NULL))
 }

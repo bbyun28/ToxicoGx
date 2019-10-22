@@ -128,10 +128,10 @@ rr0 <- tryCatch(try(glm(formula(drugpheno.1 ~ . - x), data=dd, model=FALSE, x=FA
     warning=function(w) {
       if(verbose) {
         ww <- "Null model did not convrge"
-        print(ww)
+        message(ww)
         if("type" %in% colnames(dd)) {
           tt <- table(dd[,"type"])
-          print(tt)
+          message(tt)
         }
       }
     })
@@ -140,8 +140,8 @@ rr0 <- tryCatch(try(glm(formula(drugpheno.1 ~ . - x), data=dd, model=FALSE, x=FA
       if(verbose) {
         ww <- "Model did not converge"
         tt <- table(dd[,"drugpheno.1"])
-        print(ww)
-        print(tt)
+        message(ww)
+        message(tt)
       }
       return(ww)
     })
@@ -149,24 +149,24 @@ rr0 <- tryCatch(try(glm(formula(drugpheno.1 ~ . - x), data=dd, model=FALSE, x=FA
 
 } else{
 
-rr0 <- tryCatch(try(lm(formula(paste(ff0, "~ . -x", sep=" ")), data=dd)),
-    warning=function(w) {
-      if(verbose) {
+rr0 <- tryCatch(try(lm(formula(paste(ff0, "~ . -x", sep = " ")), data = dd)),
+    warning = function(w) {
+      if (verbose) {
         ww <- "Null model did not converge"
-        print(ww)
-        if("type" %in% colnames(dd)) {
+        message(ww)
+        if ("type" %in% colnames(dd)) {
           tt <- table(dd[,"type"])
-          print(tt)
+          message(tt)
         }
       }
     })
-  rr1 <- tryCatch(try(lm(formula(paste(ff0, "~ . ", sep=" ")), data=dd)),
-    warning=function(w) {
-      if(verbose) {
+  rr1 <- tryCatch(try(lm(formula(paste(ff0, "~ . ", sep = " ")), data=dd)),
+    warning = function(w) {
+      if (verbose) {
         ww <- "Model did not converge"
         tt <- table(dd[,"drugpheno.1"])
-        print(ww)
-        print(tt)
+        message(ww)
+        message(tt)
       }
       return(ww)
     })
@@ -178,24 +178,24 @@ rr0 <- tryCatch(try(lm(formula(paste(ff0, "~ . -x", sep=" ")), data=dd)),
   if (class(rr0) != "try-error" && class(rr1) != "try-error" & class(rr0) != "character" && class(rr1) != "character") {
     rr <- summary(rr1)
 
-    if(any(unlist(lapply(drugpheno,is.factor)))){
-      rrc <- stats::anova(rr0, rr1, test="Chisq")
-      rest <- c("estimate"=rr$coefficients[grep("^x", rownames(rr$coefficients)), "Estimate"], "se"=rr$coefficients[grep("^x", rownames(rr$coefficients)), "Std. Error"], "n"=nn, "pvalue"=rrc$'Pr(>Chi)'[2])
+    if (any(unlist(lapply(drugpheno, is.factor)))) {
+      rrc <- stats::anova(rr0, rr1, test = "Chisq")
+      rest <- c("estimate" = rr$coefficients[grep("^x", rownames(rr$coefficients)), "Estimate"], "se" = rr$coefficients[grep("^x", rownames(rr$coefficients)), "Std. Error"], "n" = nn, "pvalue" = rrc$'Pr(>Chi)'[2])
       names(rest) <- c("estimate", "se", "n", "pvalue")
 
     } else {
-      if(ncol(drugpheno)>1){
+      if (ncol(drugpheno) > 1) {
         rrc <- summary(stats::manova(rr1))
         rest <- lapply(1:ncol(drugpheno), function(i) {
-          est <- paste("estimate", i, sep=".")
-          se <-  paste("se", i, sep=".")
-          tstat <- paste("tstat", i, sep=".")
+          est <- paste("estimate", i, sep = ".")
+          se <-  paste("se", i, sep = ".")
+          tstat <- paste("tstat", i, sep = ".")
           rest <- c(rr[[i]]$coefficients[grep("^x", rownames(rr[[i]]$coefficients)), "Estimate"], rr[[i]]$coefficients[grep("^x", rownames(rr[[i]]$coefficients)), "Std. Error"], rr[[i]]$coefficients[grep("^x", rownames(rr[[i]]$coefficients)), "t value"])
           names(rest) <- c(est, se, tstat)
           return(rest)
         })
         rest <- do.call(c, rest)
-        rest <- c(rest,"n"=nn, "fstat"=rrc$stats[grep("^x", rownames(rrc$stats)), "approx F"], "pvalue"=rrc$stats[grep("^x", rownames(rrc$stats)), "Pr(>F)"])
+        rest <- c(rest,"n" = nn, "fstat"=rrc$stats[grep("^x", rownames(rrc$stats)), "approx F"], "pvalue"=rrc$stats[grep("^x", rownames(rrc$stats)), "Pr(>F)"])
       } else {
         rrc <- stats::anova(rr0, rr1, test = "F")
         rest <- c("estimate"=rr$coefficients[grep("^x", rownames(rr$coefficients)), "Estimate"], "se"=rr$coefficients[grep("^x", rownames(rr$coefficients)), "Std. Error"],"n"=nn, "tstat"=rr$coefficients[grep("^x", rownames(rr$coefficients)), "t value"], "fstat"=rrc$F[2], "pvalue"=rrc$'Pr(>F)'[2], "df"=rr1$df.residual)
