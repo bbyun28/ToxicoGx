@@ -60,23 +60,15 @@ vignette: >
 
 
 ```{r setup, include=FALSE, cache=FALSE, message = FALSE}
-
 library("knitr")
-
 #opts_knit$set(root.dir=normalizePath('../'))
-
 ### Chunk options: see http://yihui.name/knitr/options/ ###
-
 ## Text results
 opts_chunk$set(echo = TRUE, warning = TRUE, message = FALSE, include = TRUE)
-
 ## Cache
 #opts_chunk$set(cache = 3, cache.path = "output/cache/")
-
 ## Plots
 # opts_chunk$set(fig.path = "output/figures/")
-
-
 ```
 
 
@@ -97,7 +89,7 @@ library(PharmacoGx)
 library(ToxicoGx)
 # Load the tset 
 data(TGGATESsmall)
-ToxicoGx::drugGeneResponseCurve(tSets = TGGATESsmall,
+ToxicoGx::drugGeneResponseCurve(tSets = TGGATESsmall, 
                       duration = c("2", "8", "24"), 
                       cellline = "Hepatocyte", mDataTypes = "rna", 
                       features = "ENSG00000140465_at", 
@@ -107,7 +99,6 @@ ToxicoGx::drugGeneResponseCurve(tSets = TGGATESsmall,
                       title = "Effect of Carbon tetra chloride on CYP1A1.",
                       cex = 0.5, cex.main = 1, legend.loc = "topright", 
                       verbose = T)
-
 ```
 
 ## Connectivity map analysis on TG-GATEs and human hepatocarcinoma signatures.
@@ -145,4 +136,3 @@ xtable::xtable(res,
 ```
 
 In the above table, omeprazole showed a positive connectivity score in contrast to isoniazid. This observation aligns with the trends reported in the paper. The above example is to demonstrate the ease with which drug perturbation analysis can be done using ToxicoGx package.
-

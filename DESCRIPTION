@@ -45,4 +45,10 @@ RoxygenNote: 6.1.1
 VignetteBuilder: knitr
 Suggests: 
     testthat (>= 2.1.0),
-    knitr
+    rmarkdown,
+    knitr,
+    knitcitations,
+    tinytex,
+    devtools,
+    PharmacoGx,
+    xtable
