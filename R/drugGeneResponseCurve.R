@@ -160,7 +160,7 @@ drugGeneResponseCurve <- function(
               rep,
               sep = "_" )
           }, FUN.VALUE = character(1))
-          names(legendValues) <- unique(unlist(features)); legendValues
+          # names(legendValues) <- unique(unlist(features)); legendValues
         })
       })
       names(doseLegends) <- dose; doseLegends
