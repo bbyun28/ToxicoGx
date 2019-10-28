@@ -87,7 +87,7 @@ drugDoseResponseCurve <-
            verbose=TRUE) {
 
     ## TODO:: Extract parameter checks into paramErrorChecker()
-    if(!missing(tSets)){ #if the tSets argument is defined
+    if (!missing(tSets)) { #if the tSets argument is defined
       if (class(tSets) != "list") { #if tSets was not passed in as list
         if (class(tSets) == "ToxicoSet") { #if tSet is of type "ToxicoSet"
           # it is a tSet but it's not in a list -> make into a list that has the same name as the tSet
@@ -116,7 +116,7 @@ drugDoseResponseCurve <-
       }
       if (class(concentrations) != "list") {
         if (mode(concentrations) == "numeric") {
-          if(mode(viabilities)!="numeric"){
+          if(mode(viabilities) != "numeric") {
             stop("Passed in 1 vector of concentrations but the viabilities are not numeric!")
           }
           # if mode(concentrations) and mode(viabilities) are both numeric
@@ -181,12 +181,12 @@ drugDoseResponseCurve <-
       for(i in 1:length(tSets)) {
         # exp_i contains the indices of sensitivity object rows that correspond to the requested cell line, drug
         exp_i <- which(sensitivityInfo(tSets[[i]])[ ,"cellid"] == cellline & sensitivityInfo(tSets[[i]])[ ,"drugid"] == drug)
-        if(length(exp_i) > 0) { #if there is a UID that corresponds to the cell line - drug combo
+        if (length(exp_i) > 0) { #if there is a UID that corresponds to the cell line - drug combo
           if (summarize.replicates) { #if replicates should be summarized
             if (length(exp_i) == 1) { #if there is only 1 UID that corresponds to the cell line - drug combo
               tSetNames[[i]] <- tSetName(tSets[[i]])
-              drug.responses <- as.data.frame(cbind("Dose"=as.numeric(as.vector(tSets[[i]]@sensitivity$raw[exp_i, colnames(tSets[[i]]@sensitivity$raw[,,"Dose"]) != "Control", "Dose"])),
-                                                    "Viability"=as.numeric(as.vector(tSets[[i]]@sensitivity$raw[exp_i, colnames(tSets[[i]]@sensitivity$raw[,,"Viability"]) != "Control", "Viability"])), stringsAsFactors=FALSE))
+              drug.responses <- as.data.frame(cbind("Dose" = as.numeric(as.vector(tSets[[i]]@sensitivity$raw[exp_i, colnames(tSets[[i]]@sensitivity$raw[,,"Dose"]) != "Control", "Dose"])),
+                                                    "Viability" = as.numeric(as.vector(tSets[[i]]@sensitivity$raw[exp_i, colnames(tSets[[i]]@sensitivity$raw[,,"Viability"]) != "Control", "Viability"])), stringsAsFactors=FALSE))
               drug.responses <- drug.responses[complete.cases(drug.responses), ]
             }else{ #if there are multiple UIDs that correspond to the cell line - drug combo
               drug.responses <- data.frame()
@@ -324,7 +324,7 @@ drugDoseResponseCurve <-
     }
 
     plot(NA, xlab="Concentration (uM)", ylab="% Viability", axes =FALSE, main=title, log="x", ylim=viability.range, xlim=dose.range, cex=cex, cex.main=cex.main)
-    magicaxis::magaxis(side=1:2, frame.plot=TRUE, tcl=-.3, majorn=c(5,3), minorn=c(5,2), usepar = TRUE, labels=as.numeric(durations))
+    magicaxis::magaxis(side=1:2, frame.plot=TRUE, tcl=-.3, majorn=c(5,3), minorn=c(5,2), usepar = TRUE)
     legends <- NULL
     legends.col <- NULL
     if (length(doses) > 1) {

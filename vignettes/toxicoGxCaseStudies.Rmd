@@ -57,31 +57,15 @@ vignette: >
   %\VignetteIndexEntry{ToxicoGx: An R Platform for Integrated Toxicogenomics Data Analysis}
 ---
 
-
-
-```{r setup, include=FALSE, cache=FALSE, message = FALSE}
-library("knitr")
-#opts_knit$set(root.dir=normalizePath('../'))
-### Chunk options: see http://yihui.name/knitr/options/ ###
-## Text results
-opts_chunk$set(echo = TRUE, warning = TRUE, message = FALSE, include = TRUE)
-## Cache
-#opts_chunk$set(cache = 3, cache.path = "output/cache/")
-## Plots
-# opts_chunk$set(fig.path = "output/figures/")
-```
-
-
 ## Plotting gene expression changes from TG-GATEs dataset
 
 Our first case study is based on a plot from a paper by Rangel-Escareño et al., in which gene expression changes of CYP1A1 (gene associated with xenobiotic metabolism) has been plotted at all concentrations and time points. The plot shows clear differential expression at time 8(hr) suggesting that higher the dose, larger the impact of CCL4 on this gene.
 For plotting the gene expression under same conditions using the package, the first step is to load the datasets from disk or download them using the downloadTSet function above. In the following example, we use the toy dataset provided with the package to illustrate the process. 
 To plot, the function drugGeneResponseCurve has been used wherein mandatory inputs such as dataset, drug name, cell-line, molecular type, gene name, dose and time points should be specified.
 
-```{r, message = FALSE, results = 'hide'}
+```{r, eval = FALSE, message = FALSE, results = 'hide'}
 devtools::install_github("bhklab/ToxicoGx", ref = "CRAN_submission")
 ```
-
 
 **Plot time dependent dose response of Carbon tetra chloride on CYP1A1 gene.**
 ```{r, message = FALSE, fig.width = 8, fig.height = 5}
@@ -102,6 +86,8 @@ ToxicoGx::drugGeneResponseCurve(tSets = TGGATESsmall,
 ```
 
 ## Connectivity map analysis on TG-GATEs and human hepatocarcinoma signatures.
+
+**NOTE:** The code for this analysis is correct, but due to CRAN package size limitations the data used herein only includes 200/20000 features. We will be providing links to the full dataset for the next release so that users can replicate our analysis. In the meantime, the figures and tables here are for demonstration purposes only, and should not be interpreted.
 
 For the second case study, we will recreate an analysis from the paper by Jos Kleinjans et al., wherein connectivity mapping has been used to predict compound carcinogenicity
 by linking in vivo human hepatocarcinoma (HCC) signature geneset with in vitro TG-GATEs primary human hepatocyte data. In this example, we are using the toy dataset. The full dataset has to be downloaded to carry out the whole analysis done in the paper.

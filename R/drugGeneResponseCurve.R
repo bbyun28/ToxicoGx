@@ -8,8 +8,8 @@
 #'
 #' if (interactive()) {
 #' drugGeneResponseCurve(TGGATESsmall, dose = c("Control", "Low", "Middle"),
-#'   mDataTypes="rna", drug = "naphthyl isothiocyanate",
-#'   duration = c("2", "8", "24"), features = "ENSG00000000003_at")
+#'   mDataTypes="rna", drug = drugNames(TGGATESsmall)[1],
+#'   duration = c("2", "8", "24"), features = fNames(TGGATESsmall, "rna")[1])
 #' }
 #'
 #' @param tSets [ToxicoSet] A ToxicoSet to be plotted in this graph. Currently
@@ -93,13 +93,13 @@ drugGeneResponseCurve <- function(
   # Place tSets in a list if not already
   if (!is(tSets, "list")) { tSets <- list(tSets) }
 
+  ## TODO:: Generalize this to work with multiple data types
+  if (missing(mDataTypes)) { mDataTypes <- names(tSets[[1]]@molecularProfiles) }
+
   if (length(tSets) > 1) { warning("Multiple tSet plotting has not been tested in this release...")}
   if (length(drug) > 1) { stop("This function currently only supports one drug per plot...")}
   if (length(mDataTypes) > 1) {stop("This function currently only supports one molecular data type per plot...")}
   if (length(features) > 1) {warning("Plot scaling for multiple features has not yet been implemented for this release...")}
-
-  ## TODO:: Generalize this to work with multiple data types
-  if (missing(mDataTypes)) { mDataTypes <- names(tSets[[1]]@molecularProfiles) }
 
   if (is.null(features)) {
     features <- lapply(tSets, function(tSet) {

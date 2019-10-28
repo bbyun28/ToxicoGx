@@ -53,9 +53,7 @@ coefficient, in a 3 dimensional array, with genes in the first direction,
 drugs in the second, and the selected return values in the third.
 }
 \examples{
-\donttest{
   data(TGGATES_small)
-  drug.perturbation <- drugPerturbationSig(TGGATES_small, mDataType="rna", nthread=1)
-}
+  drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataType="rna", nthread=1)
 
 }
