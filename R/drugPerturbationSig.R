@@ -17,8 +17,11 @@
 #' drugs in the second, and the selected return values in the third.
 #'
 #' @examples
+#' \dontrun{
 #'   data(TGGATES_small)
 #'   drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataType="rna", nthread=1)
+#' }
+
 #'
 #' @param tSet [ToxicoSet] a ToxicoSet of the perturbation experiment type
 #' @param mDataType [character] which one of the molecular data types to use

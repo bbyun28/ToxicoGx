@@ -1,6 +1,6 @@
 Package: ToxicoGx
 Type: Package
-Title: Analysis of Large-Scale Toxicogenomic Data
+Title: Analysis of Large-Scale Toxico-Genomic Data
 Version: 0.0.1
 Date: 2019-10-22
 Authors@R: c(
@@ -23,7 +23,7 @@ Description: Contains a set of functions to perform large-scale analysis of
   toxicogenomic data. A member of the Benjamin Haibe-Kains (BHK) lab's genomics 
   (Gx) suite of software, this package provides a standardized data structure to 
   hold information relevant to annotation, visualization and statistical 
-  analysis of toxicogenomic data. This package is in early release, and more 
+  analysis of toxico-genomic data. This package is in early release, and more 
   features will be added over the next few months. For more information please 
   see the included documentation, vignette, as well as:
   Ruede-Zarate, H.A. et al (2017) <doi:10.1371/journal.pone.0176284>,
