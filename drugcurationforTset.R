@@ -73,5 +73,32 @@ difference[,order(colnames(difference))]
 difference
 is.data.frame(difference)        
 
+labdixacommon
 
+#drugcuration. two columns. one for unique identifier (lab annotated drug names), second with column from the drugs in the study 
+
+
+drug_id <- c('ANTIMYCIN A', 'ESTRADIOL', 'CADMIUM DICHLORIDE', 'N7S12310TETRAMETHOXY9OXO5679TETRAHYDROBENZOAHEPTALEN7YLACETAMIDE', 'CYCLOSPORIN A', 'CYTOCHALASIN B', 'ZONALON', 'GENTAMICIN','KANAMYCIN','XOLEGEL','LITHOCHOLIC ACID','TANDUTINIB')
+
+missedcommon <- data.frame(drug_id)
+
+total <- rbind(missedcommon,labdixacommon)
+total
+
+labdruguniqA
+labdruguniqA[labdruguniqA$drug_id == 'ANTIMYCIN A',]
+
+nrow(labdruguniqA)
+labdruguniqA$drug_id[48755]
+labdruguniqA$drug_id[189]
+labdruguniqA$drug_id[48203] == 'DOXEPIN'
+labdruguniqA$drug_id[49348]
+
+test <- intersect(labdruguniqA, total)
+test
+
+labdixacommon
+setdiff(total,test)
+
+total
 
