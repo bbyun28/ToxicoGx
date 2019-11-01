@@ -17,11 +17,10 @@
 #' drugs in the second, and the selected return values in the third.
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #'   data(TGGATES_small)
 #'   drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataType="rna", nthread=1)
 #' }
-
 #'
 #' @param tSet [ToxicoSet] a ToxicoSet of the perturbation experiment type
 #' @param mDataType [character] which one of the molecular data types to use
@@ -46,7 +45,7 @@
 #'
 #' @export
 #'
-drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duration, dose, nthread = 1, returnValues=c("estimate","tstat", "pvalue", "fdr"), verbose=FALSE){
+drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duration, dose, nthread = 1, returnValues=c("estimate","tstat", "pvalue", "fdr"), verbose = FALSE){
 
   # ALLOCATE CORES FOR PARALLEL PROCESSING
   availcore <- parallel::detectCores()
@@ -55,7 +54,7 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
   }
 
   # DEAL WITH MISSING PARAMETERS
-  if (!missing(cells)){
+  if (!missing(cells)) {
     cells <- unique(cells)
   } else {
     cells <- unique(cellNames(tSet))
@@ -139,25 +138,25 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
     res <- list(res)
     names(res) <- i
     return(res)
-  }, exprs=t(molecularProfiles(tSetSubsetOnParams, mDataType)[features, samples, drop=FALSE]),
-     sampleinfo=phenoInfo(tSetSubsetOnParams, mDataType)[which(phenoInfo(tSetSubsetOnParams, mDataType)$samplename %in% samples), ]
+  }, exprs = t(molecularProfiles(tSetSubsetOnParams, mDataType)[features, samples, drop = FALSE]),
+     sampleinfo = phenoInfo(tSetSubsetOnParams, mDataType)[which(phenoInfo(tSetSubsetOnParams, mDataType)$samplename %in% samples), ]
   )
 
   # ASSEMBLE RESULTS TO BE INCLUDED IN TOXICOSIG OBJECT
   res <- do.call(c, mcres)
   res <- res[!sapply(res, is.null)]
-  drug.perturbation <- array(NA, dim = c(nrow(featureInfo(tSet, mDataType)[features,, drop=FALSE]), length(res), ncol(res[[1]])), dimnames=list(rownames(featureInfo(tSet, mDataType)[features,,drop=FALSE]), names(res), colnames(res[[1]])))
+  drug.perturbation <- array(NA, dim = c(nrow(featureInfo(tSet, mDataType)[features,, drop = FALSE]), length(res), ncol(res[[1]])), dimnames=list(rownames(featureInfo(tSet, mDataType)[features,,drop=FALSE]), names(res), colnames(res[[1]])))
   for (j in seq_len(ncol(res[[1]]))) {
     ttt <- sapply(res, function(x, j, k) {
-      xx <- array(NA, dim=length(k), dimnames=list(k))
-      xx[rownames(x)] <- x[ , j, drop=FALSE]
-      return (xx)
-    }, j=j, k=rownames(featureInfo(tSet, mDataType)[features,, drop=FALSE]))
-    drug.perturbation[rownames(featureInfo(tSet, mDataType)[features,, drop=FALSE]), names(res), j] <- ttt
+      xx <- array(NA, dim = length(k), dimnames = list(k))
+      xx[rownames(x)] <- x[ , j, drop = FALSE]
+      return(xx)
+    }, j = j, k = rownames(featureInfo(tSet, mDataType)[features,, drop = FALSE]))
+    drug.perturbation[rownames(featureInfo(tSet, mDataType)[features,, drop = FALSE]), names(res), j] <- ttt
   }
 
   # CREATE TOXICOSIG OBJECT
-  drug.perturbation <- ToxicoGx::ToxicoSig(drug.perturbation, tSetName = cSetName(tSet), Call = as.character(match.call()), SigType='Perturbation')
+  drug.perturbation <- ToxicoGx::ToxicoSig(drug.perturbation, tSetName = cSetName(tSet), Call = as.character(match.call()), SigType = 'Perturbation')
 
   # RETURN TOXICOSIG OBJECT
   return(drug.perturbation)
