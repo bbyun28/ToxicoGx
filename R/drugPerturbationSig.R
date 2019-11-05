@@ -19,7 +19,7 @@
 #' @examples
 #' if (interactive()) {
 #'   data(TGGATES_small)
-#'   drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataType="rna", nthread=1)
+#'   drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataType="rna", nthread = 1)
 #' }
 #'
 #' @param tSet [ToxicoSet] a ToxicoSet of the perturbation experiment type

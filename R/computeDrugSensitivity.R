@@ -1,6 +1,6 @@
 #' @importFrom parallel makeCluster stopCluster parSapply
 .calculateSensitivitiesStar <-
-  function (pSets = list(), exps=NULL, cap=NA, na.rm=TRUE, area.type=c("Fitted","Actual"), nthread=1) {
+  function(pSets = list(), exps=NULL, cap=NA, na.rm=TRUE, area.type=c("Fitted","Actual"), nthread = 1) {
 
     if (missing(area.type)) {
       area.type <- "Fitted"
@@ -31,13 +31,13 @@
       }
     }
     cl <- makeCluster(nthread)
-    for(study in names(pSets)){
+    for (study in names(pSets)){
 
-      auc_recomputed_star <- unlist(parSapply(cl=cl, rownames(pSets[[study]]@sensitivity$raw), function(experiment, exps, study, dataset, area.type){
-        if(!experiment %in% exps[,study]){return(NA_real_)}
-        return(computeAUC(concentration=as.numeric(dataset[experiment,,1]),
-                          viability=as.numeric(dataset[experiment,,2]),
-                          trunc=trunc, conc_as_log=FALSE, viability_as_pct=TRUE, area.type=area.type)/100)
+      auc_recomputed_star <- unlist(parSapply(cl = cl, rownames(pSets[[study]]@sensitivity$raw), function(experiment, exps, study, dataset, area.type){
+        if (!experiment %in% exps[,study]){return(NA_real_)}
+        return(computeAUC(concentration = as.numeric(dataset[experiment,,1]),
+                          viability = as.numeric(dataset[experiment,,2]),
+                          trunc = trunc, conc_as_log = FALSE, viability_as_pct = TRUE, area.type = area.type)/100)
 
 
       }, exps = exps, study = study, dataset = pSets[[study]]@sensitivity$raw, area.type=area.type))
@@ -52,7 +52,7 @@
 .calculateFromRaw <- function(raw.sensitivity, cap=NA, nthread=1, family=c("normal", "Cauchy"), scale = 0.07, n = 1){
   family <- match.arg(family)
 
-  AUC <- vector(length=dim(raw.sensitivity)[1])
+  AUC <- vector(length = dim(raw.sensitivity)[1])
   names(AUC) <- dimnames(raw.sensitivity)[[1]]
 
   IC50 <- vector(length=dim(raw.sensitivity)[1])
@@ -62,7 +62,7 @@
 
   if (!is.na(cap)) {trunc <- TRUE}else{trunc <- FALSE}
 
-  if (nthread ==1){
+  if (nthread == 1){
     pars <- lapply(names(AUC), function(exp, raw.sensitivity, family, scale, n) {
       if(length(grep("///", raw.sensitivity[exp, , "Dose"])) > 0 | all(is.na(raw.sensitivity[exp, , "Dose"]))) {
         NA

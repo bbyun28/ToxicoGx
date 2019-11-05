@@ -1462,14 +1462,14 @@ updateDrugId <- function(tSet, new.ids = vector("character")){
 #' @importFrom grDevices dev.off pdf
 
 checkTSetStructure <-
-  function(tSet, plotDist=FALSE, result.dir=".") {
-    if(!file.exists(result.dir) & plotDist) { dir.create(result.dir, showWarnings=FALSE, recursive=TRUE) }
-    for( i in 1:length(tSet@molecularProfiles)) {
+  function(tSet, plotDist=FALSE, result.dir=tempdir()) {
+    if ( !file.exists(result.dir) & plotDist) { dir.create(result.dir, showWarnings = FALSE, recursive = TRUE) }
+    for (i in 1:length(tSet@molecularProfiles)) {
       profile <- tSet@molecularProfiles[[i]]
       nn <- names(tSet@molecularProfiles)[i]
-      if((Biobase::annotation(profile) == "rna" | Biobase::annotation(profile) == "rnaseq") & plotDist)
+      if ((Biobase::annotation(profile) == "rna" | Biobase::annotation(profile) == "rnaseq") & plotDist)
       {
-        pdf(file=file.path(result.dir, sprintf("%s.pdf", nn)))
+        pdf(file = file.path(result.dir, sprintf("%s.pdf", nn)))
         hist(Biobase::exprs(profile), breaks = 100)
         dev.off()
       }
@@ -1477,112 +1477,97 @@ checkTSetStructure <-
       warning(ifelse(nrow(Biobase::pData(profile)) != ncol(Biobase::exprs(profile)), sprintf("%s: number of cell lines in pData is different from expression slots", nn), sprintf("%s: pData dimension is OK", nn)))
       warning(ifelse("cellid" %in% colnames(Biobase::pData(profile)), "", sprintf("%s: cellid does not exist in pData columns", nn)))
       warning(ifelse("batchid" %in% colnames(Biobase::pData(profile)), "", sprintf("%s: batchid does not exist in pData columns", nn)))
-      if(Biobase::annotation(profile) == "rna" | Biobase::annotation(profile) == "rnaseq")
+      if (Biobase::annotation(profile) == "rna" | Biobase::annotation(profile) == "rnaseq")
       {
         warning(ifelse("BEST" %in% colnames(Biobase::fData(profile)), "BEST is OK", sprintf("%s: BEST does not exist in fData columns", nn)))
         warning(ifelse("Symbol" %in% colnames(Biobase::fData(profile)), "Symbol is OK", sprintf("%s: Symbol does not exist in fData columns", nn)))
       }
-      if("cellid" %in% colnames(Biobase::pData(profile))) {
-        if(!all(Biobase::pData(profile)[,"cellid"] %in% rownames(tSet@cell))) {
+      if ("cellid" %in% colnames(Biobase::pData(profile))) {
+        if (!all(Biobase::pData(profile)[,"cellid"] %in% rownames(tSet@cell))) {
           warning(sprintf("%s: not all the cell lines in this profile are in cell lines slot", nn))
         }
       }else {
         warning(sprintf("%s: cellid does not exist in pData", nn))
       }
     }
-    if("tissueid" %in% colnames(tSet@cell)) {
-      if("unique.tissueid" %in% colnames(tSet@curation$tissue))
+    if ("tissueid" %in% colnames(tSet@cell)) {
+      if ("unique.tissueid" %in% colnames(tSet@curation$tissue))
       {
-        if(length(intersect(rownames(tSet@curation$tissue), rownames(tSet@cell))) != nrow(tSet@cell)) {
+        if (length(intersect(rownames(tSet@curation$tissue), rownames(tSet@cell))) != nrow(tSet@cell)) {
           message("rownames of curation tissue slot should be the same as cell slot (curated cell ids)")
         } else{
-          if(length(intersect(tSet@cell$tissueid, tSet@curation$tissue$unique.tissueid)) != length(table(tSet@cell$tissueid))){
+          if (length(intersect(tSet@cell$tissueid, tSet@curation$tissue$unique.tissueid)) != length(table(tSet@cell$tissueid))){
             message("tissueid should be the same as unique tissue id from tissue curation slot")
           }
         }
       } else {
         message("unique.tissueid which is curated tissue id across data set should be a column of tissue curation slot")
       }
-      if(any(is.na(tSet@cell[,"tissueid"]) | tSet@cell[,"tissueid"] == "", na.rm = TRUE)) {
+      if (any(is.na(tSet@cell[,"tissueid"]) | tSet@cell[,"tissueid"] == "", na.rm = TRUE)) {
         message(sprintf("There is no tissue type for this cell line(s): %s", paste(rownames(tSet@cell)[which(is.na(tSet@cell[,"tissueid"]) | tSet@cell[,"tissueid"] == "")], collapse = " ")))
       }
     } else {
       warning("tissueid does not exist in cell slot")
     }
 
-    if("unique.cellid" %in% colnames(tSet@curation$cell)) {
-      if(length(intersect(tSet@curation$cell$unique.cellid, rownames(tSet@cell))) != nrow(tSet@cell)) {
+    if ("unique.cellid" %in% colnames(tSet@curation$cell)) {
+      if (length(intersect(tSet@curation$cell$unique.cellid, rownames(tSet@cell))) != nrow(tSet@cell)) {
         message("rownames of cell slot should be curated cell ids")
       }
     } else {
       message("unique.cellid which is curated cell id across data set should be a column of cell curation slot")
     }
-    #     if("cellid" %in% colnames(tSet@cell)) {
-    #       if(length(intersect(tSet@curation$cell$cellid, rownames(tSet@cell))) != nrow(tSet@cell)) {
-    #         message("values of cellid column should be curated cell line ids")
-    #       }
-    #     } else {
-    #       message("cellid which is curated cell id across data set should be a column of cell slot")
-    #     }
 
-    if(length(intersect(rownames(tSet@curation$cell), rownames(tSet@cell))) != nrow(tSet@cell)) {
+    if (length(intersect(rownames(tSet@curation$cell), rownames(tSet@cell))) != nrow(tSet@cell)) {
       message("rownames of curation cell slot should be the same as cell slot (curated cell ids)")
     }
 
-    if("unique.drugid" %in% colnames(tSet@curation$drug)) {
-      if(length(intersect(tSet@curation$drug$unique.drugid, rownames(tSet@drug))) != nrow(tSet@drug)) {
+    if ("unique.drugid" %in% colnames(tSet@curation$drug)) {
+      if (length(intersect(tSet@curation$drug$unique.drugid, rownames(tSet@drug))) != nrow(tSet@drug)) {
         message("rownames of drug slot should be curated drug ids")
       }
     } else {
       message("unique.drugid which is curated drug id across data set should be a column of drug curation slot")
     }
 
-    #     if("drugid" %in% colnames(tSet@drug)) {
-    #       if(length(intersect(tSet@curation$drug$drugid, rownames(tSet@drug))) != nrow(tSet@drug)) {
-    #         message("values of drugid column should be curated drug ids")
-    #       }
-    #     } else {
-    #       message("drugid which is curated drug id across data set should be a column of drug slot")
-    #     }
-
-    if(length(intersect(rownames(tSet@curation$cell), rownames(tSet@cell))) != nrow(tSet@cell)) {
+    if (length(intersect(rownames(tSet@curation$cell), rownames(tSet@cell))) != nrow(tSet@cell)) {
       message("rownames of curation drug slot should be the same as drug slot (curated drug ids)")
     }
 
-    if(class(tSet@cell) != "data.frame") {
+    if (class(tSet@cell) != "data.frame") {
       warning("cell slot class type should be dataframe")
     }
-    if(class(tSet@drug) != "data.frame") {
+    if (class(tSet@drug) != "data.frame") {
       warning("drug slot class type should be dataframe")
     }
-    if(tSet@datasetType %in% c("sensitivity", "both"))
+    if (tSet@datasetType %in% c("sensitivity", "both"))
     {
-      if(class(tSet@sensitivity$info) != "data.frame") {
+      if (class(tSet@sensitivity$info) != "data.frame") {
         warning("sensitivity info slot class type should be dataframe")
       }
-      if("cellid" %in% colnames(tSet@sensitivity$info)) {
-        if(!all(tSet@sensitivity$info[,"cellid"] %in% rownames(tSet@cell))) {
+      if ("cellid" %in% colnames(tSet@sensitivity$info)) {
+        if (!all(tSet@sensitivity$info[,"cellid"] %in% rownames(tSet@cell))) {
           warning("not all the cell lines in sensitivity data are in cell slot")
         }
       }else {
         warning("cellid does not exist in sensitivity info")
       }
-      if("drugid" %in% colnames(tSet@sensitivity$info)) {
+      if ("drugid" %in% colnames(tSet@sensitivity$info)) {
         drug.ids <- unique(tSet@sensitivity$info[,"drugid"])
-        drug.ids <- drug.ids[grep("///",drug.ids, invert=TRUE)]
-        if(!all(drug.ids %in% rownames(tSet@drug))) {
+        drug.ids <- drug.ids[grep("///", drug.ids, invert = TRUE)]
+        if (!all(drug.ids %in% rownames(tSet@drug))) {
           message("not all the drugs in sensitivity data are in drug slot")
         }
       }else {
         warning("drugid does not exist in sensitivity info")
       }
 
-      if(any(!is.na(tSet@sensitivity$raw))) {
-        if(!all(dimnames(tSet@sensitivity$raw)[[1]] %in% rownames(tSet@sensitivity$info))) {
+      if (any(!is.na(tSet@sensitivity$raw))) {
+        if (!all(dimnames(tSet@sensitivity$raw)[[1]] %in% rownames(tSet@sensitivity$info))) {
           warning("For some experiments there is raw sensitivity data but no experimet information in sensitivity info")
         }
       }
-      if(!all(rownames(tSet@sensitivity$profiles) %in% rownames(tSet@sensitivity$info))) {
+      if (!all(rownames(tSet@sensitivity$profiles) %in% rownames(tSet@sensitivity$info))) {
         warning("For some experiments there is sensitivity profiles but no experimet information in sensitivity info")
       }
     }
