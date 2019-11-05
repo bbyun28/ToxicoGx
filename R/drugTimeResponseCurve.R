@@ -84,8 +84,8 @@ drugTimeResponseCurve <- function(
   }
 
   paramErrorChecker("drugTimeResponseCurve",
-                    tSets=tSets, durations=duration, cell.line=cellline,
-                    doses=dose)
+                    tSets = tSets, durations = duration, cell.line = cellline,
+                    doses = dose)
 
   ## TODO:: Make this function work with multiple tSets
   ## TODO:: Make this function work with multiple drugs

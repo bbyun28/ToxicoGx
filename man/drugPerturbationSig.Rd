@@ -55,7 +55,7 @@ drugs in the second, and the selected return values in the third.
 \examples{
 if (interactive()) {
   data(TGGATES_small)
-  drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataType="rna", nthread=1)
+  drug.perturbation <- drugPerturbationSig(TGGATESsmall, mDataType="rna", nthread = 1)
 }
 
 }
