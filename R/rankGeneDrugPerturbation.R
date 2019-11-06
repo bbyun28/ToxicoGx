@@ -24,9 +24,9 @@ rankGeneDrugPerturbation <-
 
     if (nthread != 1) {
       availcore <- parallel::detectCores()
-      if (missing(nthread) || nthread < 1 || nthread > availcore) {
+      if (nthread < 1 || nthread > availcore) {
         # print(paste("available cores",availcore,"allocated"))
-        nthread <- availcore
+        nthread <- (availcore - 1)
       }
       else{
         # print(paste("all",nthread,"cores have been allocated"))
@@ -51,8 +51,6 @@ rankGeneDrugPerturbation <-
       names(res) <- list("all"=type)
       return(res)
     }
-
-    res.type <- NULL
 
     ## build input matrix
     inpumat <- NULL
@@ -93,7 +91,7 @@ rankGeneDrugPerturbation <-
 
     res <- NULL
     utype <- sort(unique(as.character(inpumat[ , "type"])))
-    ltype <- list("all"=utype)
+    ltype <- list("all" = utype)
 
     if(single.type) {
       ltype <- c(ltype, as.list(utype))

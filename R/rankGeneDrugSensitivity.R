@@ -24,7 +24,7 @@ rankGeneDrugSensitivity <- function(data, drugpheno, type, batch, single.type=FA
   if (nthread != 1) {
     availcore <- parallel::detectCores()
     if (nthread < 1 || nthread > availcore) {
-      nthread <- availcore
+      nthread <- (availcore - 1)
     }
   }
 

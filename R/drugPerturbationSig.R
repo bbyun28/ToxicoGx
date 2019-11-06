@@ -50,7 +50,7 @@ drugPerturbationSig <- function(tSet, mDataType, drugs, cells, features, duratio
   # ALLOCATE CORES FOR PARALLEL PROCESSING
   availcore <- parallel::detectCores()
   if ( nthread > availcore) {
-    nthread <- availcore
+    nthread <- (availcore - 1)
   }
 
   # DEAL WITH MISSING PARAMETERS
