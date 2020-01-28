@@ -1,14 +1,18 @@
+library(readxl)
+library(ToxicoGx)
+library(Biobase)
+
 create_phenoData <- function(species=c("Human","Rat"), verbose = TRUE){
   if (verbose) {message("Creating phenoData object...")}
   
   #load master phenoData file from TG-GATEs
   #Master phenoData file from TG-GATEs: #14 from https://dbarchive.biosciencedbc.jp/en/open-tggates/download.html
-  all_attribute <- read.delim("data/Open-tggates_AllAttribute.tsv",stringsAsFactors = F)
+  all_attribute <- readRDS("data/Open-tggates_AllAttribute.rds")
   
   #subset out unwanted samples (rows)
   all_attribute <- subset(all_attribute, all_attribute$BARCODE != "No ChipData" &
                             all_attribute$TEST_TYPE == "in vitro" &
-                            (all_attribute$DOSE_UNIT == "ƒÊM" | all_attribute$COMPOUND_NAME == "gentamicin"))
+                            (all_attribute$DOSE_UNIT == "µM" | all_attribute$COMPOUND_NAME == "gentamicin"))
   
   #subset out unwanted columns (all NA; for in vivo studies)
   all_attribute <- Filter(function(x) !all(is.na(x)), all_attribute)
@@ -18,24 +22,41 @@ create_phenoData <- function(species=c("Human","Rat"), verbose = TRUE){
   drug_curation <- unique(all_attribute[, "COMPOUND_NAME", drop=F]) #get all unique drugs from TG-GATEs in vitro experiments
   drug_curation$unique.drugid <- drug_curation$COMPOUND_NAME #add column for lab drugid mapping; start off with all unique.drugid == tggates.drugid's
   
-  lab_curation <- read.csv("data/drugs_with_ids.csv", stringsAsFactors = F) #load lab annotation file
+  lab_curation <- read.csv("data/drugswithids.csv", stringsAsFactors = F) #load lab annotation file, pubchem updated
   
   #exact/case match with lab annotations
   drug_curation$unique.drugid <- sapply(drug_curation$COMPOUND_NAME, function(x) if (tolower(x) %in% tolower(lab_curation$unique.drugid)) (lab_curation[which(tolower(x) == tolower(lab_curation$unique.drugid)),"unique.drugid"]) else x)
   #synonyms - manually curate
   drug_curation[drug_curation$COMPOUND_NAME == "coumarin", "unique.drugid"] <- "2H-1-Benzopyran-2-one"
-  drug_curation[drug_curation$COMPOUND_NAME == "cycloheximide", "unique.drugid"] <- "cicloheximide"
-  drug_curation[drug_curation$COMPOUND_NAME == "cyclosporine A", "unique.drugid"] <- "ciclosporin"
+  #drug_curation[drug_curation$COMPOUND_NAME == "cycloheximide", "unique.drugid"] <- "Cycloheximide"
+  drug_curation[drug_curation$COMPOUND_NAME == "cyclosporine A", "unique.drugid"] <- "Cyclosporin A"
   drug_curation[drug_curation$COMPOUND_NAME == "ibuprofen", "unique.drugid"] <- "2-(4-Isobutylphenyl)propanoic acid"
-  drug_curation[drug_curation$COMPOUND_NAME == "indomethacin", "unique.drugid"] <- "indometacin"
-  drug_curation[drug_curation$COMPOUND_NAME == "methimazole", "unique.drugid"] <- "thiamazole"
-  drug_curation[drug_curation$COMPOUND_NAME == "nitrofurazone", "unique.drugid"] <- "nitrofural"
+  #drug_curation[drug_curation$COMPOUND_NAME == "indomethacin", "unique.drugid"] <- "indometacin"
+  #drug_curation[drug_curation$COMPOUND_NAME == "methimazole", "unique.drugid"] <- "Methimazole"
+  #drug_curation[drug_curation$COMPOUND_NAME == "nitrofurazone", "unique.drugid"] <- "Nitrofurazone"
   drug_curation[drug_curation$COMPOUND_NAME == "phenylanthranilic acid", "unique.drugid"] <- "N-phenylanthranilic acid"
-  drug_curation[drug_curation$COMPOUND_NAME == "WY-14643", "unique.drugid"] <- "pirinixic acid"
-  drug_curation[drug_curation$COMPOUND_NAME == "cefalotin", "unique.drugid"] <- "cephalothin"
-  drug_curation[drug_curation$COMPOUND_NAME == "valproic acid", "unique.drugid"] <- "Valproic.acid"
-  drug_curation[drug_curation$COMPOUND_NAME == "chlorpheniramine", "unique.drugid"] <- "chlorphenamine"
-  drug_curation[drug_curation$COMPOUND_NAME == "cephalothin", "unique.drugid"] <- "cefalotin"
+  drug_curation[drug_curation$COMPOUND_NAME == "WY-14643", "unique.drugid"] <- "Pirinixic acid"
+  #drug_curation[drug_curation$COMPOUND_NAME == "cefalotin", "unique.drugid"] <- "cephalothin"
+  drug_curation[drug_curation$COMPOUND_NAME == "valproic acid", "unique.drugid"] <- "Valproic acid"
+  #drug_curation[drug_curation$COMPOUND_NAME == "chlorpheniramine", "unique.drugid"] <- "Chlorpheniramine"
+  #drug_curation[drug_curation$COMPOUND_NAME == "cephalothin", "unique.drugid"] <- "cefalotin"
+  drug_curation[drug_curation$COMPOUND_NAME == "glibenclamide", "unique.drugid"] <- "Glyburide"
+  drug_curation[drug_curation$COMPOUND_NAME == "adapin", "unique.drugid"] <- "Doxepin Hydrochloride"
+  drug_curation[drug_curation$COMPOUND_NAME == "ketoconazole", "unique.drugid"] <- "Xolegel"
+  drug_curation[drug_curation$COMPOUND_NAME == "vitamin A", "unique.drugid"] <- "Retinol"
+  drug_curation[drug_curation$COMPOUND_NAME == "imipramine", "unique.drugid"] <- "Trimipramine"
+  drug_curation[drug_curation$COMPOUND_NAME == "famotidine", "unique.drugid"] <- "Pepcid"
+  drug_curation[drug_curation$COMPOUND_NAME == "penicillamine", "unique.drugid"] <- "D-Penicillamine"
+  drug_curation[drug_curation$COMPOUND_NAME == "ajmaline", "unique.drugid"] <- "Ajmalin"
+  drug_curation[drug_curation$COMPOUND_NAME == "nitrosodiethylamine", "unique.drugid"] <- "N-Nitrosodiethylamine"
+  drug_curation[drug_curation$COMPOUND_NAME == "bromoethylamine", "unique.drugid"] <- "2-Bromoethylamine"
+  drug_curation[drug_curation$COMPOUND_NAME == "galactosamine", "unique.drugid"] <- "D-Galactosamine"
+  drug_curation[drug_curation$COMPOUND_NAME == "methylene dianiline", "unique.drugid"] <- "N,N'-Diphenylmethylenediamine"
+  drug_curation[drug_curation$COMPOUND_NAME == "amphotericin B", "unique.drugid"] <- "Fungizone"
+  drug_curation[drug_curation$COMPOUND_NAME == "naphthyl isothiocyanate", "unique.drugid"] <- "1-Naphthyl isothiocyanate"
+  drug_curation[drug_curation$COMPOUND_NAME == "ethinylestradiol", "unique.drugid"] <- "Ethinyl estradiol"
+  drug_curation[drug_curation$COMPOUND_NAME == "phenylanthranilic acid", "unique.drugid"] <- "N-Phenylanthranilic acid"
+  drug_curation[drug_curation$COMPOUND_NAME == "carboplatin", "unique.drugid"] <- "Carboplatinum"
   
   drug_curation <- drug_curation[,c(2,1)] #reorder columns
   names(drug_curation)[2] <- "tggates.drugid" #rename column
@@ -62,16 +83,16 @@ create_phenoData <- function(species=c("Human","Rat"), verbose = TRUE){
     batch <- batch[,c(1,9)]
     colnames(batch) <- c("drugid", "batchid")
     colnames(batch) <- as.factor(colnames(batch))
-    batch$drugid[batch$drugid=="TNFalpha"]<- "TNFƒ¿"
+    batch$drugid[batch$drugid=="TNFalpha"]<- "TNFa"
     
     all_attribute <- subset(all_attribute, all_attribute$ARR_DESIGN == "Rat230_2" & all_attribute$TEST_TYPE == "in vitro")
     all_attribute <- merge(all_attribute, batch, by.x = "COMPOUND_NAME", by.y = "drugid")
     
     conv <- readRDS("data/conversions_gentamicin.rds")
     #Include converted doses
-    need_conversion <- subset(all_attribute,all_attribute$DOSE_UNIT != "ƒÊM",select = -c(DOSE,DOSE_UNIT))
+    need_conversion <- subset(all_attribute,all_attribute$DOSE_UNIT != "µM",select = -c(DOSE,DOSE_UNIT))
     converted <- merge(need_conversion,conv,by.x="BARCODE",by.y="BARCODE")
-    all_attribute <- subset(all_attribute,all_attribute$DOSE_UNIT == "ƒÊM")
+    all_attribute <- subset(all_attribute,all_attribute$DOSE_UNIT == "µM")
     all_attribute <- rbind(all_attribute,converted)
   }
   all_attribute <- all_attribute[, names(all_attribute) != "DOSE_UNIT"]
@@ -88,7 +109,7 @@ create_phenoData <- function(species=c("Human","Rat"), verbose = TRUE){
   all_attribute$cellid <- "Hepatocyte"
   # all_attribute$cellid <- all_attribute$BARCODE
   #fix
-  all_attribute$unique.drugid[all_attribute$unique.drugid=="TNFƒ¿"]<- "TNFa"
+  #all_attribute$unique.drugid[all_attribute$unique.drugid=="TNFƒ¿"]<- "TNFa"
   #take out " hr" from duration column entries
   all_attribute$SACRI_PERIOD <- gsub(" hr","",all_attribute$SACRI_PERIOD)
   #UID
@@ -101,7 +122,7 @@ create_phenoData <- function(species=c("Human","Rat"), verbose = TRUE){
                                     "DNA...","LDH...","UID","SPECIES","TEST_TYPE","SEX_TYPE",
                                     "ORGAN_ID","MATERIAL_ID","celfilename","xptype","STRAIN_TYPE",
                                     "ADM_ROUTE_TYPE")]
-
+  
   #Rename columns
   colnames(all_attribute) <- c("samplename","chiptype","exp_id","group_id","individual_id","batchid",
                                "concentration","dose_level","duration","cellid","drugid",
@@ -122,50 +143,63 @@ create_phenoData <- function(species=c("Human","Rat"), verbose = TRUE){
   
   return(all_attribute)
 }
-
 create_exprsData <- function(species=c("Human","Rat"), phenoData, verbose = TRUE){
   if (verbose) {message("Creating eset object...")}
   
   if (species == "Human"){
-    # install.packages("data/hgu133plus2hsensgcdf_22.0.0.tar.gz", repos = NULL, type = "source")
+    #install.packages("data/hgu133plus2hsensgcdf_22.0.0.tar.gz", repos = NULL, type = "source")#deprecated
+    install.packages("data/hgu133plus2hsensgcdf_24.0.0.tar.gz", repos = NULL, type = "source")#new version 24 downloaded and eset rerun with this
     library("hgu133plus2hsensgcdf")
     cdf <- "hgu133plus2hsensgcdf"
   } else if (species == "Rat"){
-    # install.packages("data/rat2302rnensgcdf_23.0.0.tar.gz", repos = NULL, source = 'source')
+    install.packages("data/rat2302rnensgcdf_23.0.0.tar.gz", repos = NULL, source = 'source')
     library("rat2302rnensgcdf")
     cdf <- "rat2302rnensgcdf"
   }
-  celfn <- paste("CELfiles - ",species,"/", phenoData[,"celfilename"], sep="")
-  ###########################################  NORMALIZATION  ############################################
-  #eset <- just.rma(filenames = celfn, verbose = TRUE, cdfname = cdf)
-  ########################################################################################################
+  #celfn <- paste("CELfiles - ",species,"/", phenoData[,"celfilename"], sep="")#deprecated
   
-  ########################################  ALREADY NORMALIZED  ##########################################
-  eset <- readRDS(paste("data/NORMALIZED_ONLY/eset_",species,"_",nrow(phenoData),".rds", sep = ""))
-  ########################################################################################################
+  #celfn <- paste("/Users/sisira/Desktop/TGGATES_human_raw_files/celfiles","/", phenoData[,"celfilename"], sep="")
+  
+  
+  ###########################################  NORMALIZATION  ############################################
+  # eset <- just.rma(filenames = celfn, verbose = TRUE, cdfname = cdf)
+  # saveRDS(eset, "eset_Human_2382.rds")
+  eset <- readRDS(paste("data/eset_",species,"_",nrow(phenoData),".rds", sep = ""))
   
   storageMode(eset)<-"environment"
-  #missingCEL is a data.frame containing the barcodes for all present samples
-  # missingCEL <- phenoData[,c("celfilename"), drop=F]
-  #subsetting samples
-  # eset <- eset[,sampleNames(eset) %in% missingCEL$celfilename]
-  #subsetting probes
+  # #missingCEL is a data.frame containing the barcodes for all present samples
+  #missingCEL <- phenoData[,c("celfilename"), drop=F]
+  # #subsetting samples
+  #eset <- eset[,sampleNames(eset) %in% missingCEL$celfilename]
+  # #subsetting probes
   eset<-subset(eset, substr(rownames(eset@assayData$exprs), 0, 4) != "AFFX")
-  #replace _at
-  # rownames(eset)<-gsub("_at","",rownames(eset))
-  #rename??
+  # #replace _at
+  #rownames(eset)<-gsub("_at","",rownames(eset))
+  # #rename??
   colnames(eset@assayData$exprs)<-substr(colnames(eset@assayData$exprs),3,12)
   colnames(eset@assayData$se.exprs)<-substr(colnames(eset@assayData$se.exprs),3,12)
   rownames(eset@protocolData@data)<-substr(rownames(eset@protocolData@data),3,12)
   rownames(eset@phenoData@data)<-substr(rownames(eset@protocolData@data),3,12)
-  #lock eset@assayData environment again
+  # #lock eset@assayData environment again
   storageMode(eset)<-"lockedEnvironment"
-  
+  #
   annotation(eset)<-"rna"
   
+  #
   if (verbose) {message("eset object created!")}
-  
+  #
   return(eset)
+  
+  ########################################################################################################
+  
+  ########################################  ALREADY NORMALIZED  ##########################################
+  #eset <- readRDS(paste("data/eset_",species,"_",nrow(phenoData),".rds", sep = ""))
+  # annotation(eset)<-"rna"
+  # if (verbose) {message("eset object created!")}
+  # return(eset)
+  ########################################################################################################
+  
+  
 }
 
 create_featureData <- function(species=c("Human","Rat"), eset, verbose = TRUE){
@@ -395,6 +429,7 @@ getTGGATEs <- function(species=c("Human","Rat"),
   if (verbose) {message("Putting the eset together...")}
   pData(eset) <- phenoData
   fData(eset) <- featureData
+  
   if (verbose) {message("Done!")}
   
   if (verbose) {message(paste("Requested ",type, sep = ""))}
@@ -437,4 +472,20 @@ getTGGATEs <- function(species=c("Human","Rat"),
 }
 
 # EXAMPLE -
-tggates_human <- getTGGATEs(species = "Human", type = "LDH")
+#tggates_human <- getTGGATEs(species = "Human", type = "LDH")
+tggates_human <- getTGGATEs(species = "Human", type = "DNA")
+
+tggates_rat_ldh <- getTGGATEs(species = "Rat", type = "LDH")
+tggates_rat_dna <- getTGGATEs(species = "Rat", type = "DNA")
+
+
+#### FIX TSET featureInfo ####
+ToxicoGx::featureInfo(tggates_human, "rna")$gene_id <- gsub("_at_at$", "_at", ToxicoGx::featureInfo(tggates_human, "rna")$gene_id)
+rownames(tggates_human@molecularProfiles$rna) <- gsub("_at_at$", "_at", rownames(ToxicoGx::molecularProfiles(tggates_human, "rna"))) # Remove all values after _ character
+
+#no issues with ensembl gene ids in rat tset
+saveRDS(tggates_rat_ldh, "TGGATES_ratldh.rds")
+saveRDS(tggates_rat_dna, "TGGATES_ratdna.rds")
+
+saveRDS(tggates_human, "Updated tsets/TGGATES_humandna.rds")
+#saveRDS(tggates_human, "Updated tsets/TGGATES_humanldh.rds")
