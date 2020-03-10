@@ -59,7 +59,7 @@ create_phenoData <- function(species=c("Human","Rat"), verbose = TRUE){
   drug_curation[drug_curation$COMPOUND_NAME == "carboplatin", "unique.drugid"] <- "Carboplatinum"
   
   drug_curation <- drug_curation[,c(2,1)] #reorder columns
-  names(drug_curation)[2] <- "tggates.drugid" #rename column
+  names(drug_curation)[2] <- "dataset_drugid" #rename column
   rownames(drug_curation) <- drug_curation$unique.drugid #rename rows
   
   
@@ -97,7 +97,7 @@ create_phenoData <- function(species=c("Human","Rat"), verbose = TRUE){
   }
   all_attribute <- all_attribute[, names(all_attribute) != "DOSE_UNIT"]
   ##Merge drug mapping to lab annotations to phenoData
-  all_attribute <- merge(all_attribute, drug_curation, by.x = "COMPOUND_NAME", by.y = "tggates.drugid")
+  all_attribute <- merge(all_attribute, drug_curation, by.x = "COMPOUND_NAME", by.y = "dataset_drugid")
   #CEL file name
   all_attribute$celfilename <- paste0(as.character(all_attribute$BARCODE),".CEL")
   # Label control or perturbation xptype
@@ -126,7 +126,7 @@ create_phenoData <- function(species=c("Human","Rat"), verbose = TRUE){
   #Rename columns
   colnames(all_attribute) <- c("samplename","chiptype","exp_id","group_id","individual_id","batchid",
                                "concentration","dose_level","duration","cellid","drugid",
-                               "tggates_drugid","drugid_abbr","drugid_no","DNA","LDH",
+                               "dataset_drugid","drugid_abbr","drugid_no","DNA","LDH",
                                "UID","species","test_type","sex_type","organ_id","material_id",
                                "celfilename","xptype","STRAIN_TYPE","ADM_ROUTE_TYPE")
   
@@ -152,19 +152,23 @@ create_exprsData <- function(species=c("Human","Rat"), phenoData, verbose = TRUE
     library("hgu133plus2hsensgcdf")
     cdf <- "hgu133plus2hsensgcdf"
   } else if (species == "Rat"){
-    install.packages("data/rat2302rnensgcdf_23.0.0.tar.gz", repos = NULL, source = 'source')
+    install.packages("data/rat2302rnensgcdf_24.0.0.tar.gz", repos = NULL, source = 'source')
     library("rat2302rnensgcdf")
     cdf <- "rat2302rnensgcdf"
   }
   #celfn <- paste("CELfiles - ",species,"/", phenoData[,"celfilename"], sep="")#deprecated
   
   #celfn <- paste("/Users/sisira/Desktop/TGGATES_human_raw_files/celfiles","/", phenoData[,"celfilename"], sep="")
-  
+  #celfn <- paste("/Users/sisira/OneDrive - UHN/TGGATES_rat_CELfiles","/", phenoData[,"celfilename"], sep="")
   
   ###########################################  NORMALIZATION  ############################################
-  # eset <- just.rma(filenames = celfn, verbose = TRUE, cdfname = cdf)
-  # saveRDS(eset, "eset_Human_2382.rds")
+   #eset <- just.rma(filenames = celfn, verbose = TRUE, cdfname = cdf)
+   #saveRDS(eset, paste("data/eset_",species,"_",nrow(phenoData),".rds", sep = ""))
+   #saveRDS(eset, "eset_Rat_3276.rds")
+  #human eset
   eset <- readRDS(paste("data/eset_",species,"_",nrow(phenoData),".rds", sep = ""))
+  #rat eset 
+  #eset <- readRDS("data/eset_Rat_3276.rds")
   
   storageMode(eset)<-"environment"
   # #missingCEL is a data.frame containing the barcodes for all present samples
@@ -367,17 +371,17 @@ create_sensitivityInfo <- function(phenoData, doseArray, verbose = TRUE){
 }
 
 create_curationDrug <- function(phenoData, verbose = TRUE){
-  curationDrug <- unique(subset(phenoData, select=c(drugid, tggates_drugid)))
+  curationDrug <- unique(subset(phenoData, select=c(drugid, dataset_drugid)))
   rownames(curationDrug) <- curationDrug$drugid
-  names(curationDrug) <- c("unique.drugid", "tggates.drugid")
+  names(curationDrug) <- c("unique.drugid", "dataset_drugid")
   
   return(curationDrug)
 }
 
 create_curationCell <- function(phenoData, verbose = TRUE){
   curationCell <- unique(subset(phenoData, select=c(cellid)))
-  curationCell$tggates.cellid <- curationCell$cellid
-  names(curationCell) <- c("unique.cellid", "tggates.cellid")
+  curationCell$dataset_cellid <- curationCell$cellid
+  names(curationCell) <- c("unique.cellid", "dataset_cellid")
   rownames(curationCell) <- curationCell$unique.cellid
   
   return(curationCell)
@@ -385,7 +389,7 @@ create_curationCell <- function(phenoData, verbose = TRUE){
 
 create_curationTissue <- function(phenoData, verbose = TRUE){
   curationTissue <- unique(subset(phenoData, select=c(organ_id)))
-  curationTissue$tggates.tissueid <- "Liver"
+  curationTissue$dataset_tissueid <- "Liver"
   names(curationTissue)[1] <- "unique.tissueid"
   rownames(curationTissue) <- "Hepatocyte"
   
@@ -472,20 +476,26 @@ getTGGATEs <- function(species=c("Human","Rat"),
 }
 
 # EXAMPLE -
-#tggates_human <- getTGGATEs(species = "Human", type = "LDH")
-tggates_human <- getTGGATEs(species = "Human", type = "DNA")
+tggates_human_ldh <- getTGGATEs(species = "Human", type = "LDH")
+tggates_human_dna <- getTGGATEs(species = "Human", type = "DNA")
+
+
+#### FIX TSET featureInfo ####
+ToxicoGx::featureInfo(tggates_human_ldh, "rna")$gene_id <- gsub("_at_at$", "_at", ToxicoGx::featureInfo(tggates_human_ldh, "rna")$gene_id)
+rownames(tggates_human_ldh@molecularProfiles$rna) <- gsub("_at_at$", "_at", rownames(ToxicoGx::molecularProfiles(tggates_human_ldh, "rna"))) # Remove all values after _ character
+
+
+ToxicoGx::featureInfo(tggates_human_dna, "rna")$gene_id <- gsub("_at_at$", "_at", ToxicoGx::featureInfo(tggates_human_dna, "rna")$gene_id)
+rownames(tggates_human_dna@molecularProfiles$rna) <- gsub("_at_at$", "_at", rownames(ToxicoGx::molecularProfiles(tggates_human_dna, "rna"))) # Remove all values after _ character
+
+saveRDS(tggates_human_ldh, "Updated tsets/TGGATES_humanldh.rds")
+saveRDS(tggates_human_dna, "Updated tsets/TGGATES_humandna.rds")
 
 tggates_rat_ldh <- getTGGATEs(species = "Rat", type = "LDH")
 tggates_rat_dna <- getTGGATEs(species = "Rat", type = "DNA")
 
 
-#### FIX TSET featureInfo ####
-ToxicoGx::featureInfo(tggates_human, "rna")$gene_id <- gsub("_at_at$", "_at", ToxicoGx::featureInfo(tggates_human, "rna")$gene_id)
-rownames(tggates_human@molecularProfiles$rna) <- gsub("_at_at$", "_at", rownames(ToxicoGx::molecularProfiles(tggates_human, "rna"))) # Remove all values after _ character
-
 #no issues with ensembl gene ids in rat tset
-saveRDS(tggates_rat_ldh, "TGGATES_ratldh.rds")
-saveRDS(tggates_rat_dna, "TGGATES_ratdna.rds")
+saveRDS(tggates_rat_ldh, "Updated tsets/TGGATES_ratldh.rds")
+saveRDS(tggates_rat_dna, "Updated tsets/TGGATES_ratdna.rds")
 
-saveRDS(tggates_human, "Updated tsets/TGGATES_humandna.rds")
-#saveRDS(tggates_human, "Updated tsets/TGGATES_humanldh.rds")
