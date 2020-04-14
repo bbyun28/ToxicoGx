@@ -976,6 +976,12 @@ subsetTo <- function(tSet, cell_lines = NULL,
                     drugs = drugs, features = features,
                     duration = duration)
 
+  if (tSet@annotation$name == "drugMatrix") {
+    if (!('DMSO' %in% drugs)) {
+      drugs <- c(drugs, 'DMSO')
+    }
+  }
+
   ######
   # SUBSETTING MOLECULAR PROFILES SLOT
   ######

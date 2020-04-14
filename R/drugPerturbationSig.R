@@ -86,7 +86,7 @@ drugPerturbationSig <- function(
                     drugs = drugs, features = features,
                     duration = duration, dose = dose)
 
-  returnValues <- match.arg(returnValues, several.ok = TRUE)
+  returnValues <- match.arg(returnValues, several.ok=TRUE)
 
   # Add DMSO for the drugMatrix
   if (names(tSet) == 'drugMatrix') {
